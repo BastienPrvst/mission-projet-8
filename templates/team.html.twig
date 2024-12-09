@@ -1,0 +1,76 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div id="main-container">
+        <nav>
+            <a href="index.html" id="logo">
+                <img src="img/logo.png" alt="Logo TaskLinker" />
+            </a>
+            <ul id="main-menu">
+                <li class="">
+                    <a href="index.html">
+                        <i class="fa-solid fa-list-check"></i> Projets
+                    </a>
+                </li>
+                <li class="active">
+                    <a href="employes.html">
+                        <i class="fa-regular fa-user"></i> Équipe
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <main>
+            <header>
+                <div id="current-user"></div>
+                <div id="title-page">
+                    <h1>Équipe</h1>
+                </div>
+            </header>
+            <div id="content">
+                <table id="team-container">
+                    <thead>
+                    <tr>
+                        <th>Prénom, Nom</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    {% for user in allUsers %}
+
+                        <tr>
+                            <td>
+                                <div class="employee-infos">
+                                    <div class="employee-avatar">
+                                        {{ user.name|first }} {{ user.surname|first }}
+                                    </div>
+                                    <div class="employee-coords">
+                                        <strong>{{ user.name }} {{ user.surname }}</strong>
+                                        <span>{{user.email}}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ user.contract }}</td>
+                            <td>
+                                <a class="button button-edit-team" href="employe.html">
+                                    Éditer
+                                </a>
+                                <a class="delete-team" href="#">
+                                    Supprimer
+                                </a>
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+{% endblock %}
+
+
