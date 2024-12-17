@@ -18,7 +18,7 @@ class Task
 
     #[ORM\ManyToOne(inversedBy: 'tasks')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Project $id_project = null;
+    private ?Project $project = null;
 
     #[ORM\ManyToOne(inversedBy: 'tasks')]
     private ?User $assigned_to = null;
@@ -38,7 +38,7 @@ class Task
     /**
      * @var Collection<int, TaskTag>
      */
-    #[ORM\OneToMany(targetEntity: TaskTag::class, mappedBy: 'id_task')]
+    #[ORM\OneToMany(targetEntity: TaskTag::class, mappedBy: 'task')]
     private Collection $taskTags;
 
     public function __construct()
@@ -52,14 +52,13 @@ class Task
         return $this->id;
     }
 
-    public function getIdProject(): ?Project
+    public function getProject(): ?Project
     {
-        return $this->id_project;
+        return $this->project;
     }
-
-    public function setIdProject(?Project $id_project): static
+    public function setProject(?Project $project): static
     {
-        $this->id_project = $id_project;
+        $this->project = $project;
 
         return $this;
     }
@@ -112,7 +111,7 @@ class Task
     {
         if (!$this->timeslots->contains($timeslot)) {
             $this->timeslots->add($timeslot);
-            $timeslot->setTaskId($this);
+            $timeslot->setTask($this);
         }
 
         return $this;
@@ -122,8 +121,8 @@ class Task
     {
         if ($this->timeslots->removeElement($timeslot)) {
             // set the owning side to null (unless already changed)
-            if ($timeslot->getTaskId() === $this) {
-                $timeslot->setTaskId(null);
+            if ($timeslot->getTask() === $this) {
+                $timeslot->setTask(null);
             }
         }
 
@@ -142,7 +141,7 @@ class Task
     {
         if (!$this->taskTags->contains($taskTag)) {
             $this->taskTags->add($taskTag);
-            $taskTag->setIdTask($this);
+            $taskTag->setTask($this);
         }
 
         return $this;
@@ -152,11 +151,12 @@ class Task
     {
         if ($this->taskTags->removeElement($taskTag)) {
             // set the owning side to null (unless already changed)
-            if ($taskTag->getIdTask() === $this) {
-                $taskTag->setIdTask(null);
+            if ($taskTag->getTask() === $this) {
+                $taskTag->setTask(null);
             }
         }
 
         return $this;
     }
+
 }

@@ -16,7 +16,7 @@ class Tag
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'tags')]
-    private ?Project $id_project = null;
+    private ?Project $project = null;
 
     #[ORM\Column(length: 255)]
     private ?string $name = null;
@@ -24,7 +24,7 @@ class Tag
     /**
      * @var Collection<int, TaskTag>
      */
-    #[ORM\OneToMany(targetEntity: TaskTag::class, mappedBy: 'id_tag')]
+    #[ORM\OneToMany(targetEntity: TaskTag::class, mappedBy: 'tag')]
     private Collection $taskTags;
 
     public function __construct()
@@ -35,18 +35,6 @@ class Tag
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getIdProject(): ?Project
-    {
-        return $this->id_project;
-    }
-
-    public function setIdProject(?Project $id_project): static
-    {
-        $this->id_project = $id_project;
-
-        return $this;
     }
 
     public function getName(): ?string
@@ -89,5 +77,15 @@ class Tag
         }
 
         return $this;
+    }
+
+    public function getProject(): ?Project
+    {
+        return $this->project;
+    }
+
+    public function setProject(?Project $project): void
+    {
+        $this->project = $project;
     }
 }

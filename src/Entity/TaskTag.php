@@ -14,36 +14,36 @@ class TaskTag
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'taskTags')]
-    private ?Task $id_task = null;
+    private ?Task $task = null;
 
     #[ORM\ManyToOne(inversedBy: 'taskTags')]
-    private ?Tag $id_tag = null;
+    private ?Tag $tag = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getIdTask(): ?Task
+    public function getTask(): ?Task
     {
-        return $this->id_task;
+        return $this->task;
     }
 
-    public function setIdTask(?Task $id_task): static
+    public function setTask(?Task $task): static
     {
-        $this->id_task = $id_task;
+        $this->task = $task;
 
         return $this;
     }
 
-    public function getIdTag(): ?Tag
+    public function getTag(): ?Tag
     {
-        return $this->id_tag;
+        return $this->tag;
     }
 
-    public function setIdTag(?Tag $id_tag): static
+    public function setTag(?Tag $tag): static
     {
-        $this->id_tag = $id_tag;
+        $this->tag = $tag;
 
         return $this;
     }

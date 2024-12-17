@@ -16,10 +16,10 @@ class Timeslot
 
     #[ORM\ManyToOne(inversedBy: 'timeslots')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?user $user_id = null;
+    private ?user $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'timeslots')]
-    private ?Task $task_id = null;
+    private ?Task $task = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $start_slot = null;
@@ -32,26 +32,26 @@ class Timeslot
         return $this->id;
     }
 
-    public function getUserId(): ?User
+    public function getUser(): ?User
     {
-        return $this->user_id;
+        return $this->user;
     }
 
-    public function setUserId(?User $user_id): static
+    public function setUser(?User $user): static
     {
-        $this->user_id = $user_id;
+        $this->user = $user;
 
         return $this;
     }
 
-    public function getTaskId(): ?Task
+    public function getTask(): ?Task
     {
-        return $this->task_id;
+        return $this->task;
     }
 
-    public function setTaskId(?Task $task_id): static
+    public function setTask(?Task $task): static
     {
-        $this->task_id = $task_id;
+        $this->task = $task;
 
         return $this;
     }

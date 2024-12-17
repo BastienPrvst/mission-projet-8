@@ -15,38 +15,34 @@ class UserProject
 
     #[ORM\ManyToOne(inversedBy: 'userProjects')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $id_user = null;
+    private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'userProjects')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Project $id_project = null;
+    private ?Project $project = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getIdUser(): ?User
+    public function getProject(): ?Project
     {
-        return $this->id_user;
+        return $this->project;
     }
 
-    public function setIdUser(?User $id_user): static
+    public function setProject(?Project $project): void
     {
-        $this->id_user = $id_user;
-
-        return $this;
+        $this->project = $project;
     }
 
-    public function getIdProject(): ?Project
+    public function getUser(): ?User
     {
-        return $this->id_project;
+        return $this->user;
     }
 
-    public function setIdProject(?Project $id_project): static
+    public function setUser(?User $user): void
     {
-        $this->id_project = $id_project;
-
-        return $this;
+        $this->user = $user;
     }
 }

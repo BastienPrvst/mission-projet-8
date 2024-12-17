@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Project;
 use App\Entity\UserProject;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -15,6 +16,7 @@ class UserProjectRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, UserProject::class);
     }
+
 
     //    /**
     //     * @return UserProject[] Returns an array of UserProject objects

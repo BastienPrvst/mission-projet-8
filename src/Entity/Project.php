@@ -37,7 +37,7 @@ class Project
     /**
      * @var Collection<int, UserProject>
      */
-    #[ORM\OneToMany(targetEntity: UserProject::class, mappedBy: 'id_project')]
+    #[ORM\OneToMany(targetEntity: UserProject::class, mappedBy: 'project')]
     private Collection $userProjects;
 
     /**
@@ -118,7 +118,7 @@ class Project
     {
         if (!$this->tasks->contains($task)) {
             $this->tasks->add($task);
-            $task->setIdProject($this);
+            $task->setProject($this);
         }
 
         return $this;
@@ -128,8 +128,8 @@ class Project
     {
         if ($this->tasks->removeElement($task)) {
             // set the owning side to null (unless already changed)
-            if ($task->getIdProject() === $this) {
-                $task->setIdProject(null);
+            if ($task->getProject() === $this) {
+                $task->setProject(null);
             }
         }
 
@@ -148,7 +148,7 @@ class Project
     {
         if (!$this->userProjects->contains($userProject)) {
             $this->userProjects->add($userProject);
-            $userProject->setIdProject($this);
+            $userProject->setProject($this);
         }
 
         return $this;
@@ -158,8 +158,8 @@ class Project
     {
         if ($this->userProjects->removeElement($userProject)) {
             // set the owning side to null (unless already changed)
-            if ($userProject->getIdProject() === $this) {
-                $userProject->setIdProject(null);
+            if ($userProject->getProject() === $this) {
+                $userProject->setProject(null);
             }
         }
 
@@ -178,7 +178,7 @@ class Project
     {
         if (!$this->tags->contains($tag)) {
             $this->tags->add($tag);
-            $tag->setIdProject($this);
+            $tag->setProject($this);
         }
 
         return $this;
@@ -188,8 +188,8 @@ class Project
     {
         if ($this->tags->removeElement($tag)) {
             // set the owning side to null (unless already changed)
-            if ($tag->getIdProject() === $this) {
-                $tag->setIdProject(null);
+            if ($tag->getProject() === $this) {
+                $tag->setProject(null);
             }
         }
 

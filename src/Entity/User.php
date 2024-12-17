@@ -47,7 +47,7 @@ class User
     /**
      * @var Collection<int, UserProject>
      */
-    #[ORM\OneToMany(targetEntity: UserProject::class, mappedBy: 'id_user')]
+    #[ORM\OneToMany(targetEntity: UserProject::class, mappedBy: 'user')]
     private Collection $userProjects;
 
     /**
