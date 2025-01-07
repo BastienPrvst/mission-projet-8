@@ -2,17 +2,50 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use App\Form\ChangeUserFormType;
+use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 class UserController extends AbstractController
 {
-    #[Route('/user', name: 'app_user')]
-    public function index(): Response
+
+    public function __construct(
+        private UserRepository $userRepository,
+        private EntityManagerInterface $entityManager)
     {
-        return $this->render('user/index.html.twig', [
-            'controller_name' => 'UserController',
+    }
+
+    #[Route('/user/{id}', name: 'app_user')]
+    public function showUser(Request $request, User $user): Response
+    {
+
+        $form = $this->createForm(ChangeUserFormType::class, $user);
+        $form->handleRequest($request);
+
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->entityManager->persist($user);
+            $this->entityManager->flush();
+            return $this->redirectToRoute('app_team');
+        }
+
+
+        return $this->render('user.html.twig', [
+            'form' => $form
         ]);
     }
+
+    #[Route('/user/{id}/delete', name: 'app_user_delete')]
+    public function deleteUser(User $user):Response
+    {
+        $this->entityManager->remove($user);
+        $this->entityManager->flush();
+        return $this->redirectToRoute('app_team');
+    }
+
 }

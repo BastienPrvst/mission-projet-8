@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Modifier l'utilisateur
+{% endblock %}
+
+{% block body %}
+    <div id="content">
+        {{ form_start(form) }}
+
+        <div>{{ form_row(form.name) }}</div>
+        <div>{{ form_row(form.surname) }}</div>
+        <div>{{ form_row(form.email) }}</div>
+        <div class="form-flex">
+            <div>{{ form_row(form.entry_date) }}</div>
+            <div>{{ form_row(form.contract) }}</div>
+        </div>
+        <div>{{ form_row(form.save) }}</div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
+
+
