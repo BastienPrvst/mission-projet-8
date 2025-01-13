@@ -16,7 +16,7 @@ class Timeslot
 
     #[ORM\ManyToOne(inversedBy: 'timeslots')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?user $user = null;
+    private ?User $user = null;
 
     #[ORM\ManyToOne(inversedBy: 'timeslots')]
     private ?Task $task = null;

@@ -45,22 +45,22 @@ class User
     private Collection $tasks;
 
     /**
-     * @var Collection<int, UserProject>
-     */
-    #[ORM\OneToMany(targetEntity: UserProject::class, mappedBy: 'user', cascade: ['persist', 'remove'])]
-    private Collection $userProjects;
-
-    /**
      * @var Collection<int, Timeslot>
      */
-    #[ORM\OneToMany(targetEntity: Timeslot::class, mappedBy: 'user_id')]
+    #[ORM\OneToMany(targetEntity: Timeslot::class, mappedBy: 'user')]
     private Collection $timeslots;
+
+    /**
+     * @var Collection<int, Project>
+     */
+    #[ORM\ManyToMany(targetEntity: Project::class, mappedBy: 'users')]
+    private Collection $projects;
 
     public function __construct()
     {
         $this->tasks = new ArrayCollection();
-        $this->userProjects = new ArrayCollection();
         $this->timeslots = new ArrayCollection();
+        $this->projects = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -183,36 +183,6 @@ class User
     }
 
     /**
-     * @return Collection<int, UserProject>
-     */
-    public function getUserProjects(): Collection
-    {
-        return $this->userProjects;
-    }
-
-    public function addUserProject(UserProject $userProject): static
-    {
-        if (!$this->userProjects->contains($userProject)) {
-            $this->userProjects->add($userProject);
-            $userProject->setIdUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUserProject(UserProject $userProject): static
-    {
-        if ($this->userProjects->removeElement($userProject)) {
-            // set the owning side to null (unless already changed)
-            if ($userProject->getIdUser() === $this) {
-                $userProject->setIdUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, Timeslot>
      */
     public function getTimeslots(): Collection
@@ -224,7 +194,7 @@ class User
     {
         if (!$this->timeslots->contains($timeslot)) {
             $this->timeslots->add($timeslot);
-            $timeslot->setUserId($this);
+            $timeslot->setUser($this);
         }
 
         return $this;
@@ -234,9 +204,36 @@ class User
     {
         if ($this->timeslots->removeElement($timeslot)) {
             // set the owning side to null (unless already changed)
-            if ($timeslot->getUserId() === $this) {
-                $timeslot->setUserId(null);
+            if ($timeslot->getUser() === $this) {
+                $timeslot->setUser(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Project>
+     */
+    public function getProjects(): Collection
+    {
+        return $this->projects;
+    }
+
+    public function addProject(Project $project): static
+    {
+        if (!$this->projects->contains($project)) {
+            $this->projects->add($project);
+            $project->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProject(Project $project): static
+    {
+        if ($this->projects->removeElement($project)) {
+            $project->removeUser($this);
         }
 
         return $this;

@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 #[ORM\Entity(repositoryClass: ProjectRepository::class)]
 class Project
@@ -20,37 +21,39 @@ class Project
     private ?string $name = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
-    private ?\DateTimeInterface $start_date = null;
+    #[Gedmo\Timestampable(on: 'create')]
+    private \DateTimeInterface $start_date;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
     private ?\DateTimeInterface $deadline = null;
 
     #[ORM\Column]
-    private ?bool $archived = null;
+    private ?bool $archived = false;
 
     /**
      * @var Collection<int, Task>
      */
-    #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'id_project')]
+    #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'project')]
     private Collection $tasks;
-
-    /**
-     * @var Collection<int, UserProject>
-     */
-    #[ORM\OneToMany(targetEntity: UserProject::class, mappedBy: 'project')]
-    private Collection $userProjects;
 
     /**
      * @var Collection<int, Tag>
      */
-    #[ORM\OneToMany(targetEntity: Tag::class, mappedBy: 'id_project')]
+    #[ORM\OneToMany(targetEntity: Tag::class, mappedBy: 'project')]
     private Collection $tags;
+
+    /**
+     * @var Collection<int, User>
+     */
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'projects')]
+    private Collection $users;
 
     public function __construct()
     {
         $this->tasks = new ArrayCollection();
-        $this->userProjects = new ArrayCollection();
         $this->tags = new ArrayCollection();
+        $this->users = new ArrayCollection();
+        $this->start_date = new \DateTime();
     }
 
     public function getId(): ?int
@@ -126,41 +129,9 @@ class Project
 
     public function removeTask(Task $task): static
     {
-        if ($this->tasks->removeElement($task)) {
-            // set the owning side to null (unless already changed)
-            if ($task->getProject() === $this) {
-                $task->setProject(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, UserProject>
-     */
-    public function getUserProjects(): Collection
-    {
-        return $this->userProjects;
-    }
-
-    public function addUserProject(UserProject $userProject): static
-    {
-        if (!$this->userProjects->contains($userProject)) {
-            $this->userProjects->add($userProject);
-            $userProject->setProject($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUserProject(UserProject $userProject): static
-    {
-        if ($this->userProjects->removeElement($userProject)) {
-            // set the owning side to null (unless already changed)
-            if ($userProject->getProject() === $this) {
-                $userProject->setProject(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->tasks->removeElement($task) && $task->getProject() === $this) {
+            $task->setProject(null);
         }
 
         return $this;
@@ -184,15 +155,36 @@ class Project
         return $this;
     }
 
+
     public function removeTag(Tag $tag): static
     {
-        if ($this->tags->removeElement($tag)) {
-            // set the owning side to null (unless already changed)
-            if ($tag->getProject() === $this) {
-                $tag->setProject(null);
-            }
+        // set the owning side to null (unless already changed)
+        if ($this->tags->removeElement($tag) && $tag->getProject() === $this) {
+            $tag->setProject(null);
         }
 
         return $this;
     }
+
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): static
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+        }
+
+        return $this;
+    }
+
+    public function removeUser(User $user): static
+    {
+        $this->users->removeElement($user);
+
+        return $this;
+    }
+    
 }
