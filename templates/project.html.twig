@@ -13,7 +13,7 @@
                             <div class="avatar">{{ user.name|first }}{{ user.surname|first }}</div>
                             {% endfor %}
                         </div>
-                        <a class="button" href="projet-edit.html">Modifier</a>
+                        <a class="button" href="{{ path('app_project_update', {projectName:project.name|slug, id:project.id}) }}">Modifier</a>
                     </div>
                 </div>
             </header>

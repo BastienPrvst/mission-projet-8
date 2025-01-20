@@ -29,22 +29,22 @@ class Task
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $deadline = null;
 
-    /**
-     * @var Collection<int, Timeslot>
-     */
-    #[ORM\OneToMany(targetEntity: Timeslot::class, mappedBy: 'task_id')]
-    private Collection $timeslots;
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $description = null;
 
     /**
-     * @var Collection<int, TaskTag>
+     * @var Collection<int, Tag>
      */
-    #[ORM\OneToMany(targetEntity: TaskTag::class, mappedBy: 'task')]
-    private Collection $taskTags;
+    #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'tasks')]
+    private Collection $tags;
+
+    #[ORM\ManyToOne(inversedBy: 'tasks')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Statut $statut = null;
 
     public function __construct()
     {
-        $this->timeslots = new ArrayCollection();
-        $this->taskTags = new ArrayCollection();
+        $this->tags = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -98,63 +98,51 @@ class Task
 
         return $this;
     }
-
-    /**
-     * @return Collection<int, Timeslot>
-     */
-    public function getTimeslots(): Collection
+    
+    public function getDescription(): ?string
     {
-        return $this->timeslots;
+        return $this->description;
     }
 
-    public function addTimeslot(Timeslot $timeslot): static
+    public function setDescription(?string $description): static
     {
-        if (!$this->timeslots->contains($timeslot)) {
-            $this->timeslots->add($timeslot);
-            $timeslot->setTask($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTimeslot(Timeslot $timeslot): static
-    {
-        if ($this->timeslots->removeElement($timeslot)) {
-            // set the owning side to null (unless already changed)
-            if ($timeslot->getTask() === $this) {
-                $timeslot->setTask(null);
-            }
-        }
+        $this->description = $description;
 
         return $this;
     }
 
     /**
-     * @return Collection<int, TaskTag>
+     * @return Collection<int, Tag>
      */
-    public function getTaskTags(): Collection
+    public function getTags(): Collection
     {
-        return $this->taskTags;
+        return $this->tags;
     }
 
-    public function addTaskTag(TaskTag $taskTag): static
+    public function addTag(Tag $tag): static
     {
-        if (!$this->taskTags->contains($taskTag)) {
-            $this->taskTags->add($taskTag);
-            $taskTag->setTask($this);
+        if (!$this->tags->contains($tag)) {
+            $this->tags->add($tag);
         }
 
         return $this;
     }
 
-    public function removeTaskTag(TaskTag $taskTag): static
+    public function removeTag(Tag $tag): static
     {
-        if ($this->taskTags->removeElement($taskTag)) {
-            // set the owning side to null (unless already changed)
-            if ($taskTag->getTask() === $this) {
-                $taskTag->setTask(null);
-            }
-        }
+        $this->tags->removeElement($tag);
+
+        return $this;
+    }
+
+    public function getStatut(): ?Statut
+    {
+        return $this->statut;
+    }
+
+    public function setStatut(?Statut $statut): static
+    {
+        $this->statut = $statut;
 
         return $this;
     }

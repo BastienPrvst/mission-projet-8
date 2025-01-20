@@ -48,12 +48,19 @@ class Project
     #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'projects')]
     private Collection $users;
 
+    /**
+     * @var Collection<int, Statut>
+     */
+    #[ORM\OneToMany(targetEntity: Statut::class, mappedBy: 'projectId')]
+    private Collection $statuts;
+
     public function __construct()
     {
         $this->tasks = new ArrayCollection();
         $this->tags = new ArrayCollection();
         $this->users = new ArrayCollection();
         $this->start_date = new \DateTime();
+        $this->statuts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -183,6 +190,36 @@ class Project
     public function removeUser(User $user): static
     {
         $this->users->removeElement($user);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Statut>
+     */
+    public function getStatuts(): Collection
+    {
+        return $this->statuts;
+    }
+
+    public function addStatut(Statut $statut): static
+    {
+        if (!$this->statuts->contains($statut)) {
+            $this->statuts->add($statut);
+            $statut->setProjectId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStatut(Statut $statut): static
+    {
+        if ($this->statuts->removeElement($statut)) {
+            // set the owning side to null (unless already changed)
+            if ($statut->getProjectId() === $this) {
+                $statut->setProjectId(null);
+            }
+        }
 
         return $this;
     }

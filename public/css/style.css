@@ -529,3 +529,8 @@ form .select2-container--default .select2-selection--multiple .select2-selection
         padding: 13px;
     }
 }
+
+.ts-wrapper.multi .ts-control > div{
+    background: #4B8077 !important;
+    border-radius: 10px !important;
+}

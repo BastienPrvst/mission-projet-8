@@ -2,29 +2,29 @@
 
 namespace App\Entity;
 
-use App\Repository\TagRepository;
+use App\Repository\StatutRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: TagRepository::class)]
-class Tag
+#[ORM\Entity(repositoryClass: StatutRepository::class)]
+class Statut
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'tags')]
-    private ?Project $project = null;
+    #[ORM\ManyToOne(inversedBy: 'statuts')]
+    private ?Project $projectId = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 200)]
     private ?string $name = null;
 
     /**
      * @var Collection<int, Task>
      */
-    #[ORM\ManyToMany(targetEntity: Task::class, mappedBy: 'tags')]
+    #[ORM\OneToMany(targetEntity: Task::class, mappedBy: 'statut')]
     private Collection $tasks;
 
     public function __construct()
@@ -35,6 +35,18 @@ class Tag
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getProjectId(): ?Project
+    {
+        return $this->projectId;
+    }
+
+    public function setProjectId(?Project $projectId): static
+    {
+        $this->projectId = $projectId;
+
+        return $this;
     }
 
     public function getName(): ?string
@@ -49,16 +61,6 @@ class Tag
         return $this;
     }
 
-    public function getProject(): ?Project
-    {
-        return $this->project;
-    }
-
-    public function setProject(?Project $project): void
-    {
-        $this->project = $project;
-    }
-
     /**
      * @return Collection<int, Task>
      */
@@ -71,7 +73,7 @@ class Tag
     {
         if (!$this->tasks->contains($task)) {
             $this->tasks->add($task);
-            $task->addTag($this);
+            $task->setStatut($this);
         }
 
         return $this;
@@ -80,11 +82,12 @@ class Tag
     public function removeTask(Task $task): static
     {
         if ($this->tasks->removeElement($task)) {
-            $task->removeTag($this);
+            // set the owning side to null (unless already changed)
+            if ($task->getStatut() === $this) {
+                $task->setStatut(null);
+            }
         }
 
         return $this;
     }
-
-
 }

@@ -21,7 +21,10 @@ class MainController extends AbstractController
     #[Route('/', name: 'app_home')]
     public function index(): Response
     {
-        $allProjects = $this->entityManager->getRepository(Project::class)->findAll();
+        $repository = $this->entityManager->getRepository(Project::class);
+        $allProjects = $repository->findBy([
+            'archived' => false]
+        );
 
         return $this->render('home.html.twig',[
             'allProjects' => $allProjects]);
