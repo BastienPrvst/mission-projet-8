@@ -45,22 +45,22 @@ class User
     private Collection $tasks;
 
     /**
-     * @var Collection<int, Timeslot>
-     */
-    #[ORM\OneToMany(targetEntity: Timeslot::class, mappedBy: 'user')]
-    private Collection $timeslots;
-
-    /**
      * @var Collection<int, Project>
      */
     #[ORM\ManyToMany(targetEntity: Project::class, mappedBy: 'users')]
     private Collection $projects;
 
+    /**
+     * @var Collection<int, Timeslot>
+     */
+    #[ORM\OneToMany(targetEntity: Timeslot::class, mappedBy: 'userId')]
+    private Collection $timeslots;
+
     public function __construct()
     {
         $this->tasks = new ArrayCollection();
-        $this->timeslots = new ArrayCollection();
         $this->projects = new ArrayCollection();
+        $this->timeslots = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -183,36 +183,6 @@ class User
     }
 
     /**
-     * @return Collection<int, Timeslot>
-     */
-    public function getTimeslots(): Collection
-    {
-        return $this->timeslots;
-    }
-
-    public function addTimeslot(Timeslot $timeslot): static
-    {
-        if (!$this->timeslots->contains($timeslot)) {
-            $this->timeslots->add($timeslot);
-            $timeslot->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTimeslot(Timeslot $timeslot): static
-    {
-        if ($this->timeslots->removeElement($timeslot)) {
-            // set the owning side to null (unless already changed)
-            if ($timeslot->getUser() === $this) {
-                $timeslot->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, Project>
      */
     public function getProjects(): Collection
@@ -234,6 +204,36 @@ class User
     {
         if ($this->projects->removeElement($project)) {
             $project->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Timeslot>
+     */
+    public function getTimeslots(): Collection
+    {
+        return $this->timeslots;
+    }
+
+    public function addTimeslot(Timeslot $timeslot): static
+    {
+        if (!$this->timeslots->contains($timeslot)) {
+            $this->timeslots->add($timeslot);
+            $timeslot->setUserId($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTimeslot(Timeslot $timeslot): static
+    {
+        if ($this->timeslots->removeElement($timeslot)) {
+            // set the owning side to null (unless already changed)
+            if ($timeslot->getUserId() === $this) {
+                $timeslot->setUserId(null);
+            }
         }
 
         return $this;

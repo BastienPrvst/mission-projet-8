@@ -4,18 +4,14 @@ namespace App\Form;
 
 use App\Entity\Project;
 use App\Entity\User;
-use App\Entity\UserProject;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class CreateProjectFormType extends AbstractType
+class ProjectFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -34,7 +30,7 @@ class CreateProjectFormType extends AbstractType
 
             ])
             ->add('submit', SubmitType::class, [
-                'label' => 'Créer un projet',
+                'label' => $options['submit_label'],
                 'attr' => [
                     'class' => 'button button-submit',
                 ],
@@ -46,6 +42,7 @@ class CreateProjectFormType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Project::class,
+            'submit_label' => 'Créer un projet',
         ]);
     }
 }

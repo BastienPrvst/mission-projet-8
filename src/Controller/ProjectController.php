@@ -3,10 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Project;
-use App\Form\CreateProjectFormType;
-use App\Form\UpdateProjectFormType;
-use App\Repository\ProjectRepository;
-use App\Repository\UserRepository;
+use App\Entity\Task;
+use App\Form\ProjectFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,17 +14,38 @@ use Symfony\Component\Routing\Attribute\Route;
 class ProjectController extends AbstractController
 {
     public function __construct
-    (private ProjectRepository $projectRepository,
-     private readonly EntityManagerInterface $entityManager,
-     private UserRepository $userRepository){
+    (
+        private readonly EntityManagerInterface $entityManager,
+    )
+    {
     }
 
+    #[Route('/project/{name}/{id:project}', name: 'app_project_show')]
+    public function showProject(Project $project): Response
+    {
+        $projectUser = $project->getUsers();
+        $projectStatut = $project->getStatuts();
+        $taskGroup = [];
+        $projectTasks = $project->getTasks();
+        foreach ($projectStatut as $statut) {
+            $taskGroup[$statut->getName()] = $projectTasks->filter(function (Task $task) use ($statut) {
+                return $task->getStatut()->getId() === $statut->getId();
+            });
+        }
+
+        return $this->render('project.html.twig', [
+            'projectName' => $project->getName(),
+            'project' => $project,
+            'projectUser' => $projectUser,
+            'taskGroup' => $taskGroup,
+        ]);
+    }
 
     #[Route(path: '/project/create', name: 'app_project_create')]
     public function createProject(Request $request): Response
     {
         $project = new Project();
-        $form = $this->createForm(CreateProjectFormType::class, $project);
+        $form = $this->createForm(ProjectFormType::class, $project);
         $form->handleRequest($request);
 
 
@@ -35,7 +54,7 @@ class ProjectController extends AbstractController
             $this->entityManager->flush();
             return $this->redirectToRoute('app_project_show', [
                 'id' => $project->getId(),
-                'projectName' => $project->getName()
+                'name' => $project->getName(),
             ]);
         }
 
@@ -44,38 +63,28 @@ class ProjectController extends AbstractController
         ]);
 
     }
-    #[Route('/project/{projectName}/{id}', name: 'app_project_show')]
-    public function showProject(string $projectName, Project $project): Response
-    {
 
-        $projectUser = $project->getUsers();
-
-        return $this->render('project.html.twig', [
-            'projectName' => $projectName,
-            'project' => $project,
-            'projectUser' => $projectUser
-        ]);
-    }
-
-    #[Route(path: '/project/{projectName}/{id}/remove', name: 'app_project_delete')]
-    public function deleteProject( Project $project): Response
+    #[Route(path: '/project/remove/{name}/{id:project}', name: 'app_project_delete')]
+    public function deleteProject(Project $project): Response
     {
         $project->setArchived(true);
         $this->entityManager->flush();
         return $this->redirectToRoute('app_home');
     }
 
-    #[Route(path: '/project/{projectName}/{id}/update', name: 'app_project_update')]
+    #[Route(path: '/project/update/{name}/{id:project}', name: 'app_project_update')]
     public function updateProject(Request $request, Project $project): Response
     {
-        $form = $this->createForm(UpdateProjectFormType::class, $project);
+        $form = $this->createForm(ProjectFormType::class, $project, [
+            'submit_label' => 'Modifier le projet',
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->entityManager->flush();
             return $this->redirectToRoute('app_project_show', [
                 'id' => $project->getId(),
-                'projectName' => $project->getName()
+                'name' => $project->getName()
             ]);
         }
 

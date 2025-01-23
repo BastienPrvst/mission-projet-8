@@ -14,68 +14,67 @@ class Timeslot
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'timeslots')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $user = null;
+    #[ORM\OneToOne(inversedBy: 'timeslot', cascade: ['persist', 'remove'])]
+    private ?Task $taskId = null;
 
     #[ORM\ManyToOne(inversedBy: 'timeslots')]
-    private ?Task $task = null;
+    private ?User $userId = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $start_slot = null;
+    private ?\DateTimeInterface $startSlot = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $end_slot = null;
+    private ?\DateTimeInterface $endSlot = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getUser(): ?User
+    public function getTaskId(): ?Task
     {
-        return $this->user;
+        return $this->taskId;
     }
 
-    public function setUser(?User $user): static
+    public function setTaskId(?Task $taskId): static
     {
-        $this->user = $user;
+        $this->taskId = $taskId;
 
         return $this;
     }
 
-    public function getTask(): ?Task
+    public function getUserId(): ?User
     {
-        return $this->task;
+        return $this->userId;
     }
 
-    public function setTask(?Task $task): static
+    public function setUserId(?User $userId): static
     {
-        $this->task = $task;
+        $this->userId = $userId;
 
         return $this;
     }
 
     public function getStartSlot(): ?\DateTimeInterface
     {
-        return $this->start_slot;
+        return $this->startSlot;
     }
 
-    public function setStartSlot(\DateTimeInterface $start_slot): static
+    public function setStartSlot(\DateTimeInterface $startSlot): static
     {
-        $this->start_slot = $start_slot;
+        $this->startSlot = $startSlot;
 
         return $this;
     }
 
     public function getEndSlot(): ?\DateTimeInterface
     {
-        return $this->end_slot;
+        return $this->endSlot;
     }
 
-    public function setEndSlot(\DateTimeInterface $end_slot): static
+    public function setEndSlot(\DateTimeInterface $endSlot): static
     {
-        $this->end_slot = $end_slot;
+        $this->endSlot = $endSlot;
 
         return $this;
     }
